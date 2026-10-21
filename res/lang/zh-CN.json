@@ -169,7 +169,8 @@
         "more_actions": "更多操作",
         "search_and_replace": "搜索并替换歌词",
         "source_info": "歌词来自 {{platform}} - {{title}}{{artist}}",
-        "select_mode": "选择模式"
+        "select_mode": "选择模式",
+        "auto_linked": "已自动关联歌词：{{platform}} - {{title}}"
     },
     "media": {
         "unknown_title": "未命名",
@@ -407,7 +408,9 @@
             "font_color_label": "歌词字体颜色",
             "font_color_desc": "当前歌词强调色",
             "stroke_color_label": "歌词描边颜色",
-            "stroke_color_desc": "歌词文字描边颜色"
+            "stroke_color_desc": "歌词文字描边颜色",
+            "auto_search_label": "自动搜索歌词",
+            "auto_search_desc": "播放的歌曲没有歌词时，自动搜索并关联匹配的歌词"
         },
         "plugin": {
             "subtitle": "插件行为与更新策略",

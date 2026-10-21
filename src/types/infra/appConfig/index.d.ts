@@ -50,6 +50,8 @@ interface _IAppConfig {
     'lyric.fontSize': number;
     /** 描边颜色 */
     'lyric.strokeColor': string;
+    /** 播放无歌词的歌曲时，自动搜索并关联歌词 */
+    'lyric.autoSearch': boolean;
 
     /** 是否启用本地快捷键 */
     'shortCut.enableLocal': boolean;

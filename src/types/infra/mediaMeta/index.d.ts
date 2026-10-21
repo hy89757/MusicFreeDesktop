@@ -18,6 +18,13 @@ export interface IMediaMeta {
     };
     /** 用户设置的歌词时间偏移（秒），正值歌词提前，负值延后 */
     lyricOffset?: number;
+    /**
+     * 是否已对该歌曲执行过自动歌词搜索。
+     *
+     * 用于避免每次播放都重复发起搜索（搜索成功、无结果、用户手动取消关联后均置为 true）。
+     * 用户手动关联歌词时不写该字段，因为手动关联本身已提供歌词。
+     */
+    autoLyricSearched?: boolean;
 }
 
 /** setMeta patch 类型：null 表示删除该字段（RFC 7396） */

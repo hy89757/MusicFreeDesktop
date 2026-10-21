@@ -3,12 +3,16 @@
  *
  * 通过 pluginManager 获取歌词源，使用 LyricParser 解析，
  * 播放进度变化时更新当前歌词行并写入 jotai atom。
+ * 常规途径全部拿不到歌词时，交由 autoLyricSearch 自动搜索关联。
  */
 import LyricParser from '@common/lyricParser';
 import { compositeKey } from '@common/mediaKey';
 import pluginManager from '@infra/pluginManager/renderer';
 import mediaMeta from '@infra/mediaMeta/renderer';
+import i18n from '@infra/i18n/renderer';
+import { showToast } from '@renderer/mainWindow/components/ui/Toast';
 import { store, currentLyricAtom, progressAtom, associatedLyricAtom } from './store';
+import { autoSearchLyric } from './autoLyricSearch';
 
 /** 歌词偏移写入 mediaMeta 的防抖延迟（ms） */
 const OFFSET_PERSIST_DELAY = 500;
@@ -45,20 +49,12 @@ class LyricManager {
             if (!lyricSource?.rawLrc && !lyricSource?.lrc) {
                 this.parser = null;
                 store.set(currentLyricAtom, null);
+                // 全部获取途径都没有歌词，尝试自动搜索关联
+                await this.tryAutoSearch(musicItem, key);
                 return;
             }
 
-            this.parser = new LyricParser(lyricSource.rawLrc ?? lyricSource.lrc ?? '', {
-                musicItem,
-                translation: lyricSource.translation,
-            });
-
-            // C-17: 初始定位到当前播放时间（恢复播放等场景，避免歌词从头开始）
-            const currentTime = store.get(progressAtom).currentTime;
-            store.set(currentLyricAtom, {
-                parser: this.parser,
-                currentLrc: this.parser.getPosition(currentTime + this.userOffset) ?? undefined,
-            });
+            this.applyLyricSource(musicItem, lyricSource);
         } catch {
             if (this.currentMusicKey === key) {
                 this.parser = null;
@@ -129,6 +125,54 @@ class LyricManager {
         this.currentMusicKey = null;
         store.set(currentLyricAtom, null);
         await this.fetchLyric(musicItem);
+    }
+
+    /** 用歌词源构建解析器并定位到当前播放进度 */
+    private applyLyricSource(musicItem: IMusic.IMusicItem, lyricSource: ILyric.ILyricSource) {
+        this.parser = new LyricParser(lyricSource.rawLrc ?? lyricSource.lrc ?? '', {
+            musicItem,
+            translation: lyricSource.translation,
+        });
+
+        // C-17: 初始定位到当前播放时间（恢复播放等场景，避免歌词从头开始）
+        const currentTime = store.get(progressAtom).currentTime;
+        store.set(currentLyricAtom, {
+            parser: this.parser,
+            currentLrc: this.parser.getPosition(currentTime + this.userOffset) ?? undefined,
+        });
+    }
+
+    /**
+     * 常规途径拿不到歌词时，自动搜索并关联。
+     *
+     * 关联成功后重新读取歌词源（此时命中 getLyricAdapter 的"用户关联歌词"分支），
+     * 并同步 associatedLyricAtom，让界面显示歌词来源。
+     */
+    private async tryAutoSearch(musicItem: IMusic.IMusicItem, key: string): Promise<void> {
+        try {
+            const result = await autoSearchLyric(musicItem, () => this.currentMusicKey !== key);
+            // 切歌了，丢弃结果
+            if (!result.linked || this.currentMusicKey !== key) return;
+
+            store.set(associatedLyricAtom, result.matched ?? null);
+
+            const lyricSource = await pluginManager.adapters.getLyric(musicItem);
+            if (this.currentMusicKey !== key) return;
+
+            if (lyricSource?.rawLrc || lyricSource?.lrc) {
+                this.applyLyricSource(musicItem, lyricSource);
+                if (result.matched) {
+                    showToast(
+                        i18n.t('lyric.auto_linked', {
+                            platform: result.matched.platform ?? '',
+                            title: result.matched.title ?? '',
+                        }),
+                    );
+                }
+            }
+        } catch {
+            // 自动搜索失败不影响播放，保持"暂无歌词"状态
+        }
     }
 }
 

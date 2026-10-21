@@ -169,7 +169,8 @@
         "more_actions": "更多操作",
         "search_and_replace": "搜尋並替換歌詞",
         "source_info": "歌詞來自 {{platform}} - {{title}}{{artist}}",
-        "select_mode": "選擇模式"
+        "select_mode": "選擇模式",
+        "auto_linked": "已自動關聯歌詞：{{platform}} - {{title}}"
     },
     "media": {
         "unknown_title": "無標題",
@@ -407,7 +408,9 @@
             "font_color_label": "歌詞字體顏色",
             "font_color_desc": "當前歌詞強調色",
             "stroke_color_label": "歌詞描邊顏色",
-            "stroke_color_desc": "歌詞文字描邊顏色"
+            "stroke_color_desc": "歌詞文字描邊顏色",
+            "auto_search_label": "自動搜尋歌詞",
+            "auto_search_desc": "播放的歌曲沒有歌詞時，自動搜尋並關聯相符的歌詞"
         },
         "plugin": {
             "subtitle": "插件行為與更新策略",

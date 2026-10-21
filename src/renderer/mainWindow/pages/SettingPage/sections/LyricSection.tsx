@@ -25,7 +25,7 @@ const FONT_SIZE_MAX = 80;
  * 歌词设置
  *
  * 配置项：enableDesktopLyric、alwaysOnTop、lockLyric、
- *         fontData、fontColor、strokeColor、fontSize
+ *         fontData、fontColor、strokeColor、fontSize、autoSearch
  */
 export function LyricSection() {
     const { t } = useTranslation();
@@ -36,6 +36,7 @@ export function LyricSection() {
     const [fontColor, setFontColor] = useConfigValue('lyric.fontColor');
     const [strokeColor, setStrokeColor] = useConfigValue('lyric.strokeColor');
     const [fontSize, setFontSize] = useConfigValue('lyric.fontSize');
+    const [autoSearch, setAutoSearch] = useConfigValue('lyric.autoSearch');
 
     // ── 本地字体列表 ──
     const [fontOptions, setFontOptions] = useState<SelectOption[]>([
@@ -155,6 +156,11 @@ export function LyricSection() {
                 label={t('settings.lyric.lock_label')}
                 description={t('settings.lyric.lock_desc')}
                 control={<Toggle checked={lockLyric ?? false} onChange={setLockLyric} />}
+            />
+            <SettingRow
+                label={t('settings.lyric.auto_search_label')}
+                description={t('settings.lyric.auto_search_desc')}
+                control={<Toggle checked={autoSearch ?? false} onChange={setAutoSearch} />}
             />
             <SettingRow
                 label={t('settings.lyric.font_label')}

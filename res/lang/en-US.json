@@ -169,7 +169,8 @@
         "more_actions": "More Actions",
         "search_and_replace": "Search & Replace Lyrics",
         "source_info": "Lyrics from {{platform}} - {{title}}{{artist}}",
-        "select_mode": "Select Mode"
+        "select_mode": "Select Mode",
+        "auto_linked": "Lyrics auto-linked: {{platform}} - {{title}}"
     },
     "media": {
         "unknown_title": "Untitled",
@@ -407,7 +408,9 @@
             "font_color_label": "Lyrics font color",
             "font_color_desc": "Current lyrics highlight color",
             "stroke_color_label": "Lyrics stroke color",
-            "stroke_color_desc": "Lyrics text stroke color"
+            "stroke_color_desc": "Lyrics text stroke color",
+            "auto_search_label": "Auto search lyrics",
+            "auto_search_desc": "Search and link matching lyrics when the playing song has none"
         },
         "plugin": {
             "subtitle": "Plugin Behavior & Update Policy",
